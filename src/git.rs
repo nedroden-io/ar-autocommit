@@ -22,7 +22,9 @@ impl GitClient {
 
     pub fn get_diff(&self) -> anyhow::Result<String> {
         let head = self.repository.head()?.peel_to_tree()?;
-        let diff = self.repository.diff_tree_to_index(Some(&head), None, None)?;
+        let diff = self
+            .repository
+            .diff_tree_to_index(Some(&head), None, None)?;
 
         let mut diff_aggr = String::new();
 
@@ -33,7 +35,7 @@ impl GitClient {
             diff_aggr.push_str(&match origin {
                 '+' => format!("+ {}", content),
                 '-' => format!("- {}", content),
-                _   => format!(" {}", content),
+                _ => format!(" {}", content),
             });
             true
         });

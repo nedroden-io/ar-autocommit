@@ -1,6 +1,6 @@
-use crate::{app_settings, azure, git};
 use crate::azure::AzureClient;
 use crate::cli::parse_args;
+use crate::{app_settings, azure, git};
 
 pub async fn run() -> anyhow::Result<()> {
     let run_config = parse_args()?;
@@ -18,7 +18,10 @@ pub async fn run() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn generate_commit_message<'a>(azure_client: &AzureClient<'a>, diff: &str) -> anyhow::Result<String> {
+async fn generate_commit_message<'a>(
+    azure_client: &AzureClient<'a>,
+    diff: &str,
+) -> anyhow::Result<String> {
     let response = azure_client
         .send_openai_request::<OpenAiResponse>(
             &OpenAiRequest {
