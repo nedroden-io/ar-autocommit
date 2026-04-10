@@ -10,3 +10,11 @@ you omit this step, you will find that the runtime fails with a 'builder error'.
 ## Dependencies
 
 * `libgit2` (`brew install libgit2`)
+
+## Examples
+
+```bash
+ar-autocommit
+ar-autocommit -t .
+ar-autocommit --target .
+```
