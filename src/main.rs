@@ -28,6 +28,8 @@ async fn run() -> anyhow::Result<()> {
     let commit_message = send_openai_request(&azure_client, &diff).await?;
     client.commit(commit_message.as_str())?;
 
+    // some changes
+
     Ok(())
 }
 
