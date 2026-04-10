@@ -25,13 +25,13 @@ async fn run() -> anyhow::Result<()> {
     client.stage_changes()?;
     let diff = client.get_diff()?;
 
-    let response = send_openai_request(&azure_client, &diff).await?;
-    println!("{}", &response.choices.first().unwrap().message.content);
+    let commit_message = send_openai_request(&azure_client, &diff).await?;
+    client.commit(commit_message.as_str())?;
 
     Ok(())
 }
 
-async fn send_openai_request<'a>(azure_client: &AzureClient<'a>, diff: &str) -> anyhow::Result<OpenAiResponse> {
+async fn send_openai_request<'a>(azure_client: &AzureClient<'a>, diff: &str) -> anyhow::Result<String> {
     let response = azure_client
         .send_openai_request::<OpenAiResponse>(
             &OpenAiRequest {
@@ -53,7 +53,7 @@ async fn send_openai_request<'a>(azure_client: &AzureClient<'a>, diff: &str) -> 
         )
         .await?;
 
-    Ok(response)
+    Ok(response.choices.first().unwrap().message.content.clone())
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]

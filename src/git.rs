@@ -17,9 +17,6 @@ impl GitClient {
         index.add_all([&self.path].iter(), git2::IndexAddOption::DEFAULT, None)?;
         index.write()?;
 
-        // comment
-        // another comment
-
         Ok(())
     }
 
@@ -42,5 +39,27 @@ impl GitClient {
         });
 
         Ok(diff_aggr)
+    }
+
+    pub fn commit(&self, message: &str) -> anyhow::Result<()> {
+        let mut index = self.repository.index()?;
+        let tree_id = index.write_tree()?;
+        let tree = self.repository.find_tree(tree_id)?;
+
+        let signature = git2::Signature::now("Robert Monden", "robert.monden@iodigital.com")?;
+        let parent_commit = self.repository.head()?.peel_to_commit()?;
+
+        let commit_id = self.repository.commit(
+            Some("HEAD"),
+            &signature,
+            &signature,
+            message,
+            &tree,
+            &[&parent_commit],
+        )?;
+
+        println!("[{}] {}", commit_id, message);
+
+        Ok(())
     }
 }
