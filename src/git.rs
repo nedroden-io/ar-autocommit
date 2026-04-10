@@ -14,8 +14,11 @@ impl GitClient {
     pub fn stage_changes(&self) -> anyhow::Result<()> {
         let mut index = self.repository.index()?;
 
-        index.add_all([&self.path], git2::IndexAddOption::DEFAULT, None)?;
+        index.add_all([&self.path].iter(), git2::IndexAddOption::DEFAULT, None)?;
         index.write()?;
+
+        // comment
+        // another comment
 
         Ok(())
     }
@@ -24,19 +27,20 @@ impl GitClient {
         let head = self.repository.head()?.peel_to_tree()?;
         let diff = self.repository.diff_tree_to_index(Some(&head), None, None)?;
 
-        let _ = diff.print(git2::DiffFormat::Raw, |delta, _hunk, line| {
-            let origin = line.origin(); // '+', '-', ' ', usw.
-            let content = std::str::from_utf8(line.content()).unwrap_or("");
-            let path = delta.new_file().path().unwrap().display();
+        let mut diff_aggr = String::new();
 
-            match origin {
-                '+' => print!("\x1b[32m+{}\x1b[0m", content), // grün
-                '-' => print!("\x1b[31m-{}\x1b[0m", content), // rot
-                _   => print!(" {}", content),
-            }
+        let _ = diff.print(git2::DiffFormat::Patch, |_delta, _hunk, line| {
+            let origin = line.origin();
+            let content = std::str::from_utf8(line.content()).unwrap_or("failure");
+
+            diff_aggr.push_str(&match origin {
+                '+' => format!("+ {}", content),
+                '-' => format!("- {}", content),
+                _   => format!(" {}", content),
+            });
             true
         });
 
-        todo!("implement")
+        Ok(diff_aggr)
     }
 }

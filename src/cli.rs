@@ -6,7 +6,7 @@ use anyhow::Result;
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None)]
 pub struct RunConfig {
-    #[arg(short, long, required = true)]
+    #[arg(short, long, required = false, default_value = ".")]
     pub target: PathBuf,
 }
 
