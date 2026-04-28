@@ -8,6 +8,9 @@ use anyhow::Result;
 pub struct RunConfig {
     #[arg(short, long, required = false, default_value = ".")]
     pub target: PathBuf,
+
+    #[arg(short, long, required = false)]
+    pub prefix: Option<String>,
 }
 
 pub fn parse_args() -> Result<RunConfig> {

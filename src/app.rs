@@ -12,7 +12,12 @@ pub async fn run() -> anyhow::Result<()> {
     client.stage_changes()?;
     let diff = client.get_diff()?;
 
-    let commit_message = generate_commit_message(&azure_client, &diff).await?;
+    let mut commit_message = generate_commit_message(&azure_client, &diff).await?;
+
+    if let Some(prefix) = run_config.prefix {
+        commit_message = format!("{} {}", prefix, commit_message);
+    }
+
     client.commit(commit_message.as_str())?;
 
     Ok(())
