@@ -17,4 +17,5 @@ you omit this step, you will find that the runtime fails with a 'builder error'.
 ar-autocommit
 ar-autocommit -t .
 ar-autocommit --target .
+ar-autocommit -p JiraTicketNumber
 ```
